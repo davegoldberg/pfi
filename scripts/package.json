@@ -1,0 +1,11 @@
+{
+  "name": "pfi-scripts",
+  "version": "1.0.0",
+  "description": "Tiller -> Supabase sync scripts",
+  "main": "sync.js",
+  "type": "module",
+  "dependencies": {
+    "googleapis": "^144.0.0",
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}
