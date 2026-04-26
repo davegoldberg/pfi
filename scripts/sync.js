@@ -29,14 +29,25 @@ const supabase = createClient(
 
 function parseDate(val) {
   if (!val) return null;
-  const parts = String(val).split('/');
-  if (parts.length === 3) {
-    const month = parts[0].padStart(2, '0');
-    const day = parts[1].padStart(2, '0');
-    const year = parts[2];
-    return year + '-' + month + '-' + day;
+  const s = String(val).trim();
+
+  // M/D/YYYY from Transactions
+  const slashParts = s.split('/');
+  if (slashParts.length === 3 && slashParts[2].length === 4) {
+    const month = slashParts[0].padStart(2, '0');
+    const day = slashParts[1].padStart(2, '0');
+    return slashParts[2] + '-' + month + '-' + day;
   }
-  const d = new Date(val);
+
+  // YY-MM-DD from Balance History
+  const dashParts = s.split('-');
+  if (dashParts.length === 3 && dashParts[0].length === 2) {
+    const year = '20' + dashParts[0];
+    return year + '-' + dashParts[1] + '-' + dashParts[2];
+  }
+
+  // ISO or anything else
+  const d = new Date(s);
   if (isNaN(d)) return null;
   return d.toISOString().split('T')[0];
 }
