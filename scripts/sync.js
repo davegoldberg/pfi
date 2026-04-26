@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const TRANSACTIONS_RANGE = 'Transactions!A:P';
-const BALANCE_HISTORY_RANGE = 'Balance History!A:E';
+const BALANCE_HISTORY_RANGE = 'Balance History!A:L';
 
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 
@@ -18,10 +18,14 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
-// Column mapping (0-indexed):
+// Transactions column mapping (0-indexed):
 // 0:Tick 1:Date 2:Description 3:Category 4:Amount 5:Account 6:Account#
 // 7:Institution 8:Month 9:Week 10:Transaction ID 11:Check Number
 // 12:Full Description 13:Categorized Date 14:Date Added 15:Metadata
+
+// Balance History column mapping (0-indexed):
+// 0:Tick 1:Date 2:Time 3:Account 4:Account# 5:Account ID
+// 6:Institution 7:Balance 8:Month 9:Week 10:Type 11:Class
 
 function parseDate(val) {
   if (!val) return null;
@@ -119,14 +123,14 @@ async function syncBalances() {
 
   const seen = {};
   const records = dataRows
-    .filter(function(r) { return r[2] && r[0]; })
+    .filter(function(r) { return r[4] && r[1]; })
     .map(function(r) {
       return {
-        date: parseDate(r[0]),
-        account: r[1] || null,
-        account_number: r[2],
-        institution: r[3] || null,
-        balance: parseAmount(r[4]),
+        date: parseDate(r[1]),
+        account: r[3] || null,
+        account_number: r[4],
+        institution: r[6] || null,
+        balance: parseAmount(r[7]),
       };
     })
     .filter(function(r) {
