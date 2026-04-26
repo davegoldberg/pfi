@@ -57,6 +57,7 @@ async function syncTransactions() {
 
   const dataRows = rows.slice(1);
 
+  const seen = {};
   const records = dataRows
     .filter(function(r) { return r[10]; })
     .map(function(r) {
@@ -77,6 +78,11 @@ async function syncTransactions() {
         normalized_payee: r[2] || null,
         normalized_category: r[3] || null,
       };
+    })
+    .filter(function(r) {
+      if (seen[r.transaction_id]) return false;
+      seen[r.transaction_id] = true;
+      return true;
     });
 
   console.log('Upserting ' + records.length + ' transactions...');
@@ -111,6 +117,7 @@ async function syncBalances() {
 
   const dataRows = rows.slice(1);
 
+  const seen = {};
   const records = dataRows
     .filter(function(r) { return r[2] && r[0]; })
     .map(function(r) {
@@ -121,6 +128,12 @@ async function syncBalances() {
         institution: r[3] || null,
         balance: parseAmount(r[4]),
       };
+    })
+    .filter(function(r) {
+      const key = r.account_number + '|' + r.date;
+      if (seen[key]) return false;
+      seen[key] = true;
+      return true;
     });
 
   console.log('Upserting ' + records.length + ' balance rows...');
