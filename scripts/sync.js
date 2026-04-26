@@ -27,11 +27,12 @@ const supabase = createClient(
 
 function parseDate(val) {
   if (!val) return null;
-  // Handle M/D/YYYY format from Tiller
   const parts = String(val).split('/');
   if (parts.length === 3) {
-    const [month, day, year] = parts;
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    const month = parts[0].padStart(2, '0');
+    const day = parts[1].padStart(2, '0');
+    const year = parts[2];
+    return year + '-' + month + '-' + day;
   }
   const d = new Date(val);
   if (isNaN(d)) return null;
