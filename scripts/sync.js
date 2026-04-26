@@ -24,8 +24,15 @@ const supabase = createClient(
 
 // ---- Helpers ---------------------------------------------------------------
 
+
 function parseDate(val) {
   if (!val) return null;
+  // Handle M/D/YYYY format from Tiller
+  const parts = String(val).split('/');
+  if (parts.length === 3) {
+    const [month, day, year] = parts;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
   const d = new Date(val);
   if (isNaN(d)) return null;
   return d.toISOString().split('T')[0];
