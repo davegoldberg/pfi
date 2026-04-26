@@ -2,7 +2,7 @@ import { google } from 'googleapis';
 import { createClient } from '@supabase/supabase-js';
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
-const TRANSACTIONS_RANGE = 'Transactions!A:O';
+const TRANSACTIONS_RANGE = 'Transactions!A:P';
 const BALANCE_HISTORY_RANGE = 'Balance History!A:E';
 
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
@@ -17,6 +17,11 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY
 );
+
+// Column mapping (0-indexed):
+// 0:Tick 1:Date 2:Description 3:Category 4:Amount 5:Account 6:Account#
+// 7:Institution 8:Month 9:Week 10:Transaction ID 11:Check Number
+// 12:Full Description 13:Categorized Date 14:Date Added 15:Metadata
 
 function parseDate(val) {
   if (!val) return null;
@@ -53,24 +58,24 @@ async function syncTransactions() {
   const dataRows = rows.slice(1);
 
   const records = dataRows
-    .filter(function(r) { return r[9]; })
+    .filter(function(r) { return r[10]; })
     .map(function(r) {
       return {
-        transaction_id: r[9],
-        date: parseDate(r[0]),
-        description: r[1] || null,
-        full_description: r[11] || null,
-        category: r[2] || null,
-        amount: parseAmount(r[3]),
-        account: r[4] || null,
-        account_number: r[5] || null,
-        institution: r[6] || null,
-        month: r[7] || null,
-        week: r[8] || null,
-        check_number: r[10] || null,
-        tags: r[14] || null,
-        normalized_payee: r[1] || null,
-        normalized_category: r[2] || null,
+        transaction_id: r[10],
+        date: parseDate(r[1]),
+        description: r[2] || null,
+        full_description: r[12] || null,
+        category: r[3] || null,
+        amount: parseAmount(r[4]),
+        account: r[5] || null,
+        account_number: r[6] || null,
+        institution: r[7] || null,
+        month: r[8] || null,
+        week: r[9] || null,
+        check_number: r[11] || null,
+        tags: r[15] || null,
+        normalized_payee: r[2] || null,
+        normalized_category: r[3] || null,
       };
     });
 
