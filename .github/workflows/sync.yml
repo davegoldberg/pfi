@@ -21,6 +21,11 @@ jobs:
         run: npm install
         working-directory: scripts
 
+      - name: Debug credentials
+        run: echo "CREDS_LENGTH=${#GOOGLE_CREDENTIALS}"
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
       - name: Sync transactions
         run: node sync.js
         working-directory: scripts
