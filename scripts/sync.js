@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const TRANSACTIONS_RANGE = 'Transactions!A:P';
-const BALANCE_HISTORY_RANGE = 'Balances!A:E';
+const BALANCE_HISTORY_RANGE = 'Balance History!A:E';
 
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 
